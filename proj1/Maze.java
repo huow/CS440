@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 import java.io.*;
 
@@ -8,10 +9,16 @@ class Pair {
 		this.x = x;
 		this.y = y;
 	}
-	public getX() {
+	public void setX(int x) {
+		this.x = x;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+	public int getX() {
 		return x;
 	}
-	public getY() {
+	public int getY() {
 		return y;
 	}
 }
@@ -36,20 +43,23 @@ public class Maze {
 			while((line = bufferedReader.readLine()) != null) {
                 System.out.println(line);
             }
+		} catch(Exception e) {
+			System.exit(1);
 		}
+		return null;
 	}
 	public Pair getStart() {
 		return start;
 	}
 	//Get the remaining goals, return null if no goals left.
 	public Pair getGoal() {
-		if(goals.size == 0) {
+		if(goals.size() == 0) {
 			return null;
 		} else {
 			return goals.get(0);
 		}
 	}
-	public Maze getMaze() {
+	public int[][] getMaze() {
 		return maze;
 	}
 }
