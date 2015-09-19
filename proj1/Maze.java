@@ -8,10 +8,11 @@ class Pair {
 	private int y;
 	private int gx;
 	private int hx;
+	private HashSet<Pair> goals;
 	private int calGx(int oldGx) {
 		return oldGx + 1;
 	}
-	private int calManhattan(int x, int y, HashSet<Pair> goals) {
+	private int calManhattan(int x, int y) {
 		int manhattan = 0;
 		for(Pair p : goals) {
 			manhattan += Math.abs(p.getX() - x) + Math.abs(p.getY() - y);
@@ -21,8 +22,9 @@ class Pair {
 	public Pair(int x, int y, int gx, HashSet<Pair> goals) {
 		this.x = x;
 		this.y = y;
+		this.goals = goals;
 		this.gx = calGx(gx);
-		this.hx = calManhattan(x, y, goals);
+		this.hx = calManhattan(x, y);
 	}
 	public void setX(int x) {
 		this.x = x;
@@ -36,6 +38,30 @@ class Pair {
 	public int getY() {
 		return y;
 	}
+	public int getGx() {
+		return gx;
+	}
+	public int getHx() {
+		return hx;
+	}
+	public HashSet<Pair> getGoals() {
+		return goals;
+	}
+	@Override
+	public int hashCode() {
+		return x * 101 + y;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		if(!(obj instanceof Pair)) {
+			return false;
+		}
+		Pair t = (Pair)obj;
+		return t.getX() == this.x && t.getY() == this.y;
+	}
 }
 public class Maze {
 	private Pair start;
@@ -45,7 +71,6 @@ public class Maze {
 	private char[][] maze;
 	//Constructor
 	public Maze(String fileName) {
-		start = new Pair(0, 0);
 		goals = new HashSet<Pair>();
 		maze = readMaze(fileName);
 		rowLen = maze.length;
@@ -70,11 +95,16 @@ public class Maze {
 		}
 		for(int i = 0; i < newMaze.length; i++) {
 			for(int j = 0; j < newMaze[0].length; j++) {
-				if(newMaze[i][j] == 'P') {
-					start = new Pair(i, j);
-				} else if(newMaze[i][j] == '.') {
-					goals.add(new Pair(i, j));
+				if(newMaze[i][j] == '.') {
+					goals.add(new Pair(i, j, 0, null));
 				}
+			}
+		}
+		for(int i = 0; i < newMaze.length; i++) {
+			for(int j = 0; j < newMaze[0].length; j++) {
+				if(newMaze[i][j] == 'P') {
+					start = new Pair(i, j, 0, goals);
+				}	
 			}
 		}
 		return newMaze;
@@ -82,13 +112,12 @@ public class Maze {
 	public Pair getStart() {
 		return start;
 	}
-	//Get the remaining goals, return null if no goals left.
-	public Pair getGoal() {
-		if(goals.size() == 0) {
-			return null;
-		} else {
-			return goals.get(0);
-		}
+	public void checkGoal(Pair t) {
+		if(goals.contains(t))
+			goals.remove(t);
+	}
+	public HashSet<Pair> getGoals() {
+		return goals;
 	}
 	public char[][] getMaze() {
 		return maze;

@@ -30,19 +30,27 @@ public class Agent {
 		return maze.getMaze()[x][y + 1] == '%';
 	}
 	//If the move to go up is valid, then return the new pair, otherwise return null
-	public Pair moveUP(int x, int y) {
-		return isValidLoc(x, y + 1) && !isBarrier(x, y + 1)? new Pair(x, y + 1) : null; 
+	public Pair moveUp(Pair curLoc, boolean[][] visited) {
+		int x = curLoc.getX();
+		int y = curLoc.getY();
+		return isValidLoc(x, y + 1) && !isBarrier(x, y + 1) && !visited[x][y + 1]? new Pair(x, y + 1, curLoc.getGx(), curLoc.getGoals()) : null; 
 	}
 	//If the move to go down is valid, then return the new pair, otherwise return null
-	public Pair moveDown(int x, int y) {
-		return isValidLoc(x, y - 1) && !isBarrier(x, y - 1)? new Pair(x, y - 1) : null; 
+	public Pair moveDown(Pair curLoc, boolean[][] visited) {
+		int x = curLoc.getX();
+		int y = curLoc.getY();
+		return isValidLoc(x, y - 1) && !isBarrier(x, y - 1) && !visited[x][y - 1]? new Pair(x, y - 1, curLoc.getGx(), curLoc.getGoals()) : null; 
 	}
 	//If the move to go left is valid, then return the new pair, otherwise return null
-	public Pair moveLeft(int x, int y) {
-		return isValidLoc(x - 1, y) && !isBarrier(x - 1, y)? new Pair(x - 1, y) : null; 
+	public Pair moveLeft(Pair curLoc, boolean[][] visited) {
+		int x = curLoc.getX();
+		int y = curLoc.getY();
+		return isValidLoc(x - 1, y) && !isBarrier(x - 1, y) && !visited[x - 1][y]? new Pair(x - 1, y, curLoc.getGx(), curLoc.getGoals()) : null; 
 	}
 	//If the move to go right is valid, then return the new pair, otherwise return null
-	public Pair moveRight(int x, int y) {	
-		return isValidLoc(x + 1, y) && !isBarrier(x + 1, y)? new Pair(x + 1, y) : null; 
+	public Pair moveRight(Pair curLoc, boolean[][] visited) {	
+		int x = curLoc.getX();
+		int y = curLoc.getY();
+		return isValidLoc(x + 1, y) && !isBarrier(x + 1, y) && !visited[x + 1][y]? new Pair(x + 1, y, curLoc.getGx(), curLoc.getGoals()) : null; 
 	}
 }
