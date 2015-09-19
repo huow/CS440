@@ -20,20 +20,29 @@ public class Agent {
 	public int getY() {
 		return curLoc.getY();
 	}
-	public boolean moveUP(int x, int y) {
-		//need to implement
-		return true;
+	public List<Pair> getPath() {
+		return path;
 	}
-	public boolean moveDown(int x, int y) {
-		//need to implement
-		return true;
+	public boolean isValidLoc(int x, int y) {
+		return x >= 0 && x < maze.getColLen() && y >=0 && y < maze.getRowLen();
 	}
-	public boolean moveLeft(int x, int y) {
-		//need to implement
-		return true;
+	public boolean isBarrier(int x, int y) {
+		return maze.getMaze()[x][y + 1] == '%';
 	}
-	public boolean moveRight(int x, int y) {
-		//need to implement
-		return true;
+	//If the move to go up is valid, then return the new pair, otherwise return null
+	public Pair moveUP(int x, int y) {
+		return isValidLoc(x, y + 1) && !isBarrier(x, y + 1)? new Pair(x, y + 1) : null; 
+	}
+	//If the move to go down is valid, then return the new pair, otherwise return null
+	public Pair moveDown(int x, int y) {
+		return isValidLoc(x, y - 1) && !isBarrier(x, y - 1)? new Pair(x, y - 1) : null; 
+	}
+	//If the move to go left is valid, then return the new pair, otherwise return null
+	public Pair moveLeft(int x, int y) {
+		return isValidLoc(x - 1, y) && !isBarrier(x - 1, y)? new Pair(x - 1, y) : null; 
+	}
+	//If the move to go right is valid, then return the new pair, otherwise return null
+	public Pair moveRight(int x, int y) {	
+		return isValidLoc(x + 1, y) && !isBarrier(x + 1, y)? new Pair(x + 1, y) : null; 
 	}
 }
