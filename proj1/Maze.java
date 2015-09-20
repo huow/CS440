@@ -8,6 +8,7 @@ class Pair {
 	private int y;
 	private int gx;
 	private int hx;
+	private Pair parent;
 	private HashSet<Pair> goals;
 	private int calGx(int oldGx) {
 		return oldGx + 1;
@@ -23,14 +24,19 @@ class Pair {
 		this.x = x;
 		this.y = y;
 		this.goals = goals;
-		this.gx = calGx(gx);
-		this.hx = calManhattan(x, y);
+		if(goals != null) { //If goals == null, then the current pair is goal, no need to calculate gx, hx. 
+			this.gx = calGx(gx);
+			this.hx = calManhattan(x, y);
+		}
 	}
 	public void setX(int x) {
 		this.x = x;
 	}
 	public void setY(int y) {
 		this.y = y;
+	}
+	public void setParent(Pair parent) { //Record the previous step
+		this.parent = parent;
 	}
 	public int getX() {
 		return x;
@@ -44,12 +50,15 @@ class Pair {
 	public int getHx() {
 		return hx;
 	}
+	public Pair getParent() {
+		return parent;
+	}
 	public HashSet<Pair> getGoals() {
 		return goals;
 	}
 	@Override
 	public int hashCode() {
-		return x * 101 + y;
+		return y * 101 + x;
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -96,14 +105,14 @@ public class Maze {
 		for(int i = 0; i < newMaze.length; i++) {
 			for(int j = 0; j < newMaze[0].length; j++) {
 				if(newMaze[i][j] == '.') {
-					goals.add(new Pair(i, j, 0, null));
+					goals.add(new Pair(j, i, 0, null));
 				}
 			}
 		}
 		for(int i = 0; i < newMaze.length; i++) {
 			for(int j = 0; j < newMaze[0].length; j++) {
 				if(newMaze[i][j] == 'P') {
-					start = new Pair(i, j, 0, goals);
+					start = new Pair(j, i, 0, goals);
 				}	
 			}
 		}
@@ -112,9 +121,12 @@ public class Maze {
 	public Pair getStart() {
 		return start;
 	}
-	public void checkGoal(Pair t) {
-		if(goals.contains(t))
+	public boolean checkGoal(Pair t) {
+		if(goals.contains(t)) {
 			goals.remove(t);
+			return true;
+		}
+		return false;
 	}
 	public HashSet<Pair> getGoals() {
 		return goals;
@@ -142,12 +154,18 @@ public class Maze {
 		}
 		if(ag != null) {
 			for(Pair p : ag.getPath()) {
-				copy[p.getX()][p.getY()] = 'A';
+				copy[p.getY()][p.getX()] = 'A';
 			}
 		}
-		for(int i = 0; i < copy.length; i++) {
+		System.out.println("Origin:");
+		print(mz.getMaze());
+		System.out.println("Result:");
+		print(copy);
+	}
+	public static void print(char[][] map) {
+		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[0].length; j++) {
-				System.out.print(copy[i][j]);
+				System.out.print(map[i][j]);
 			}
 			System.out.println();
 		}

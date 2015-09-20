@@ -27,30 +27,30 @@ public class Agent {
 		return x >= 0 && x < maze.getColLen() && y >=0 && y < maze.getRowLen();
 	}
 	public boolean isBarrier(int x, int y) {
-		return maze.getMaze()[x][y + 1] == '%';
+		return maze.getMaze()[y][x] == '%';
 	}
 	//If the move to go up is valid, then return the new pair, otherwise return null
 	public Pair moveUp(Pair curLoc, boolean[][] visited) {
 		int x = curLoc.getX();
 		int y = curLoc.getY();
-		return isValidLoc(x, y + 1) && !isBarrier(x, y + 1) && !visited[x][y + 1]? new Pair(x, y + 1, curLoc.getGx(), curLoc.getGoals()) : null; 
+		return isValidLoc(x, y - 1) && !isBarrier(x, y - 1) && !visited[y - 1][x]? new Pair(x, y - 1, curLoc.getGx(), curLoc.getGoals()) : null; 
 	}
 	//If the move to go down is valid, then return the new pair, otherwise return null
 	public Pair moveDown(Pair curLoc, boolean[][] visited) {
 		int x = curLoc.getX();
 		int y = curLoc.getY();
-		return isValidLoc(x, y - 1) && !isBarrier(x, y - 1) && !visited[x][y - 1]? new Pair(x, y - 1, curLoc.getGx(), curLoc.getGoals()) : null; 
+		return isValidLoc(x, y + 1) && !isBarrier(x, y + 1) && !visited[y + 1][x]? new Pair(x, y + 1, curLoc.getGx(), curLoc.getGoals()) : null; 
 	}
 	//If the move to go left is valid, then return the new pair, otherwise return null
 	public Pair moveLeft(Pair curLoc, boolean[][] visited) {
 		int x = curLoc.getX();
 		int y = curLoc.getY();
-		return isValidLoc(x - 1, y) && !isBarrier(x - 1, y) && !visited[x - 1][y]? new Pair(x - 1, y, curLoc.getGx(), curLoc.getGoals()) : null; 
+		return isValidLoc(x - 1, y) && !isBarrier(x - 1, y) && !visited[y][x - 1]? new Pair(x - 1, y, curLoc.getGx(), curLoc.getGoals()) : null; 
 	}
 	//If the move to go right is valid, then return the new pair, otherwise return null
 	public Pair moveRight(Pair curLoc, boolean[][] visited) {	
 		int x = curLoc.getX();
 		int y = curLoc.getY();
-		return isValidLoc(x + 1, y) && !isBarrier(x + 1, y) && !visited[x + 1][y]? new Pair(x + 1, y, curLoc.getGx(), curLoc.getGoals()) : null; 
+		return isValidLoc(x + 1, y) && !isBarrier(x + 1, y) && !visited[y][x + 1]? new Pair(x + 1, y, curLoc.getGx(), curLoc.getGoals()) : null; 
 	}
 }
