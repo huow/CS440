@@ -5,7 +5,7 @@ public class Search {
 
 	}
 	public static void BFS(Agent ag, Maze mz) {
-
+		
 	}
 	public static void GBFS(Agent ag, Maze mz) {
 

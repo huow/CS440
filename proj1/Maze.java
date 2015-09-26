@@ -154,7 +154,7 @@ public class Maze {
 		}
 		if(ag != null) {
 			for(Pair p : ag.getPath()) {
-				copy[p.getY()][p.getX()] = 'A';
+				copy[p.getY()][p.getX()] = '.';
 			}
 		}
 		System.out.println("Origin:");
