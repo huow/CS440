@@ -2,32 +2,60 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.io.*;
-
+class Hx {
+	private static int Type = 1; //Set default type to be manhattan
+	public final static int Manhattan = 1;
+	public final static int ImproveManhattan = 2;
+	public final static int Ghost = 3;
+	public final static int PenalTrunsOne = 4;
+	public final static int PenalTrunsTwo = 5;
+	public final static int MultipleGoals = 6;
+	public static boolean setType(int ty) {
+		if(ty >= 1 && ty <= 6) {
+			Type = ty;
+			return true;
+		}
+		return false;
+	}
+	public static int getType() {
+		return Type;
+	}
+}
 class Pair {
 	private int x;
 	private int y;
 	private int gx;
 	private int hx;
+	private int dir;
 	private Pair parent;
 	private HashSet<Pair> goals;
-	private int calGx(int oldGx) {
-		return oldGx + 1;
-	}
-	private int calManhattan(int x, int y) {
-		int manhattan = 0;
-		for(Pair p : goals) {
-			manhattan += Math.abs(p.getX() - x) + Math.abs(p.getY() - y);
-		}
-		return manhattan;
-	}
-	public Pair(int x, int y, int gx, HashSet<Pair> goals) {
+	/******General*******/
+	public Pair(int x, int y, int gx, int dir, HashSet<Pair> goals) {
 		this.x = x;
 		this.y = y;
+		this.gx = gx;
 		this.goals = goals;
-		if(goals != null) { //If goals == null, then the current pair is goal, no need to calculate gx, hx. 
-			this.gx = calGx(gx);
-			this.hx = calManhattan(x, y);
+		this.dir = dir;
+		if(goals == null) { 
+			return;
 		}
+		//If goals == null, then the current pair is goal, no need to calculate gx, hx. 
+		if(Hx.getType() == Hx.Manhattan) {
+			this.hx = calManhattan(x, y);
+		} else if(Hx.getType() == Hx.ImproveManhattan) {
+			this.hx = (int)(1.1 * calManhattan(x, y));
+		} else if(Hx.getType() == Hx.Ghost) {
+			this.hx = calGhostHx();
+		} else if(Hx.getType() == Hx.PenalTrunsOne) {
+
+		} else if(Hx.getType() == Hx.PenalTrunsTwo) {
+
+		} else if(Hx.getType() == Hx.MultipleGoals) {
+
+		}
+	}
+	public void setDir(int d) {
+		this.dir = d;
 	}
 	public void setX(int x) {
 		this.x = x;
@@ -37,6 +65,9 @@ class Pair {
 	}
 	public void setParent(Pair parent) { //Record the previous step
 		this.parent = parent;
+	}
+	public int getDir() {
+		return dir;
 	}
 	public int getX() {
 		return x;
@@ -71,6 +102,21 @@ class Pair {
 		Pair t = (Pair)obj;
 		return t.getX() == this.x && t.getY() == this.y;
 	}
+	/******1.1 Single Goal********/
+	private int calManhattan(int x, int y) {
+		int manhattan = 0;
+		for(Pair p : goals) {
+			manhattan += Math.abs(p.getX() - x) + Math.abs(p.getY() - y);
+		}
+		return manhattan;
+	}
+	/****1.2 Penalizing turns*****/
+	/****1.3 Pacman with ghost****/
+	private int calGhostHx() {
+		return 0;
+	}
+	/****2.0 multiple goals*******/
+
 }
 public class Maze {
 	private Pair start;
@@ -105,14 +151,14 @@ public class Maze {
 		for(int i = 0; i < newMaze.length; i++) {
 			for(int j = 0; j < newMaze[0].length; j++) {
 				if(newMaze[i][j] == '.') {
-					goals.add(new Pair(j, i, 0, null));
+					goals.add(new Pair(j, i, 0, -1, null));
 				}
 			}
 		}
 		for(int i = 0; i < newMaze.length; i++) {
 			for(int j = 0; j < newMaze[0].length; j++) {
 				if(newMaze[i][j] == 'P') {
-					start = new Pair(j, i, 0, goals);
+					start = new Pair(j, i, 0, Direction.East, goals); //Initial direction is east
 				}	
 			}
 		}
@@ -157,8 +203,6 @@ public class Maze {
 				copy[p.getY()][p.getX()] = '.';
 			}
 		}
-		System.out.println("Origin:");
-		print(mz.getMaze());
 		System.out.println("Result:");
 		print(copy);
 	}
