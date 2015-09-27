@@ -1,4 +1,16 @@
 public class Recorder {
-	int expandNodes;
-	
+	private int expandNodes;
+	private int	cost;
+	public void setCost(int cost) {
+		this.cost = cost;
+	}
+	public void addExpand() {
+		expandNodes++;
+	}
+	public int getCost() {
+		return cost;
+	}
+	public int getExpandNodes() {
+		return expandNodes;
+	}
 }

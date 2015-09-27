@@ -12,6 +12,8 @@ public class Game {
 		init(Hx.Manhattan, CostMode.Two);
 		Maze smallMaze = new Maze("mazes/openMaze.txt");
 		Agent astarAg = new Agent(smallMaze);
-		Search.Astar(astarAg, smallMaze);
+		Recorder rd = new Recorder();
+		Search.Astar(astarAg, smallMaze, rd);
+		System.out.println(rd.getExpandNodes());
 	}
 }

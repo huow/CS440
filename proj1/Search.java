@@ -1,17 +1,18 @@
 import java.util.*;
 
 public class Search {
-	public static void DFS(Agent ag, Maze mz) {
+	public static void DFS(Agent ag, Maze mz, Recorder rd) {
 		if(ag == null || mz == null) {
 			System.out.println("BFS Search fail because of invalid input arguments.");
 			return;
 		}
 		List<Pair> sol = new ArrayList<Pair>(); //Current soluction
 		boolean[][] visited = new boolean[mz.getRowLen()][mz.getColLen()];
-		dfsHelper(ag.getStart(), ag, mz, visited, sol);
+		dfsHelper(ag.getStart(), ag, mz, visited, sol, rd);
+		rd.setCost(ag.getPath().size()); 
 		Maze.printMaze(mz, ag);
 	}
-	private static boolean dfsHelper(Pair cur, Agent ag, Maze mz, boolean[][] visited, List<Pair> sol) {
+	private static boolean dfsHelper(Pair cur, Agent ag, Maze mz, boolean[][] visited, List<Pair> sol, Recorder rd) {
 		if(mz.checkGoal(cur)) {
 			sol.add(cur);
 			for(Pair p : sol) {
@@ -19,28 +20,29 @@ public class Search {
 			}
 			return true;
 		}
+		rd.addExpand(); //Record expand Nodes
 		visited[cur.getY()][cur.getX()] = true;
 		Pair up = ag.moveUp(cur, visited);
 		Pair down = ag.moveDown(cur, visited);
 		Pair left = ag.moveLeft(cur, visited);
 		Pair right = ag.moveRight(cur, visited);
 		sol.add(cur);
-		if(up != null && dfsHelper(up, ag, mz, visited, sol)) {
+		if(up != null && dfsHelper(up, ag, mz, visited, sol, rd)) {
 			return true;
 		}
-		if(left != null && dfsHelper(left, ag, mz, visited, sol)) {
+		if(left != null && dfsHelper(left, ag, mz, visited, sol, rd)) {
 			return true;
 		}
-		if(down != null && dfsHelper(down, ag, mz, visited, sol)) {
+		if(down != null && dfsHelper(down, ag, mz, visited, sol, rd)) {
 			return true;
 		}
-		if(right != null && dfsHelper(right, ag, mz, visited, sol)) {
+		if(right != null && dfsHelper(right, ag, mz, visited, sol, rd)) {
 			return true;
 		}
 		sol.remove(sol.size() - 1);
 		return false;
 	}
-	public static void BFS(Agent ag, Maze mz) {
+	public static void BFS(Agent ag, Maze mz, Recorder rd) {
 		if(ag == null || mz == null) {
 			System.out.println("BFS Search fail because of invalid input arguments.");
 			return;
@@ -52,6 +54,7 @@ public class Search {
 		que.add(mz.getStart());
 		while(mz.getGoals().size() != 0) {
 			Pair cur = que.poll();
+			rd.addExpand(); //Record expand Nodes
 			Pair up = ag.moveUp(cur, visited);
 			Pair down = ag.moveDown(cur, visited);
 			Pair left = ag.moveLeft(cur, visited);
@@ -81,6 +84,7 @@ public class Search {
 				que.add(right);
 			}
 		}
+		rd.setCost(last.getGx()); //record cost
 		//record the optimal path to the agent 
 		Pair cur = last;
 		List<Pair> path = ag.getPath();
@@ -90,7 +94,7 @@ public class Search {
 		}
 		Maze.printMaze(mz, ag);
 	}
-	public static void Gbfs(Agent ag, Maze mz) {
+	public static void Gbfs(Agent ag, Maze mz, Recorder rd) {
 		//Sanity check..
 		if(ag == null || mz == null) {
 			System.out.println("Astar Search fail because of invalid input arguments.");
@@ -114,6 +118,7 @@ public class Search {
 		pq.add(mz.getStart());
 		while(mz.getGoals().size() != 0) {
 			Pair cur = pq.poll();
+			rd.addExpand(); //Record expand Nodes
 			if(mz.checkGoal(cur)) {
 				last = cur;
 				break;
@@ -143,6 +148,7 @@ public class Search {
 				pq.add(right);
 			}
 		}
+		rd.setCost(last.getGx()); //Record cost
 		//record the optimal path to the agent 
 		Pair cur = last;
 		List<Pair> path = ag.getPath();
@@ -152,7 +158,7 @@ public class Search {
 		}
 		Maze.printMaze(mz, ag);
 	}
-	public static void Astar(Agent ag, Maze mz) {
+	public static void Astar(Agent ag, Maze mz, Recorder rd) {
 		//Sanity check..
 		if(ag == null || mz == null) {
 			System.out.println("Astar Search fail because of invalid input arguments.");
@@ -175,6 +181,7 @@ public class Search {
 		pq.add(mz.getStart());
 		while(mz.getGoals().size() != 0) {
 			Pair cur = pq.poll();
+			rd.addExpand(); //Record expand Nodes
 			visited[cur.getY()][cur.getX()] = true;
 			if(mz.checkGoal(cur)) {
 				last = cur;
@@ -201,6 +208,7 @@ public class Search {
 				pq.add(right);
 			}
 		}
+		rd.setCost(last.getGx()); //record cost
 		//record the optimal path to the agent 
 		Pair cur = last;
 		List<Pair> path = ag.getPath();
