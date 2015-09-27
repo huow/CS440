@@ -91,25 +91,18 @@ public class Search {
 		Maze.printMaze(mz, ag);
 	}
 	public static void Gbfs(Agent ag, Maze mz) {
-		frontierSearch(ag, mz, true);
-	}
-	public static void Astar(Agent ag, Maze mz) {
-		frontierSearch(ag, mz, false);	
-	}
-	public static void frontierSearch(Agent ag, Maze mz, boolean isGBFS) {
 		//Sanity check..
 		if(ag == null || mz == null) {
 			System.out.println("Astar Search fail because of invalid input arguments.");
 			return;
 		}
-		final boolean isGbfs = isGBFS;
 		char[][] board = mz.getMaze();
 		boolean[][] visited = new boolean[mz.getRowLen()][mz.getColLen()];
 		PriorityQueue<Pair> pq = new PriorityQueue<Pair>(mz.getRowLen() * mz.getColLen(), new Comparator<Pair>(){
 			@Override
 			public int compare(Pair a, Pair b) {
-				int aVal = (isGbfs? 0 : a.getGx()) + a.getHx();
-				int bVal = (isGbfs? 0 : b.getGx()) + b.getHx();
+				int aVal = a.getHx();
+				int bVal = b.getHx();
 				if(aVal == bVal) {
 					return 0;
 				}
@@ -146,6 +139,64 @@ public class Search {
 			}
 			if(right != null) {
 				visited[right.getY()][right.getX()] = true;
+				right.setParent(cur);
+				pq.add(right);
+			}
+		}
+		//record the optimal path to the agent 
+		Pair cur = last;
+		List<Pair> path = ag.getPath();
+		while(cur != null) {
+			path.add(cur);
+			cur = cur.getParent();
+		}
+		Maze.printMaze(mz, ag);
+	}
+	public static void Astar(Agent ag, Maze mz) {
+		//Sanity check..
+		if(ag == null || mz == null) {
+			System.out.println("Astar Search fail because of invalid input arguments.");
+			return;
+		}
+		char[][] board = mz.getMaze();
+		boolean[][] visited = new boolean[mz.getRowLen()][mz.getColLen()];
+		PriorityQueue<Pair> pq = new PriorityQueue<Pair>(mz.getRowLen() * mz.getColLen(), new Comparator<Pair>(){
+			@Override
+			public int compare(Pair a, Pair b) {
+				int aVal = a.getGx() + a.getHx();
+				int bVal = b.getGx() + b.getHx();
+				if(aVal == bVal) {
+					return 0;
+				}
+				return aVal < bVal? -1 : 1;
+			}
+		});
+		Pair last = null; //The pair reference which refer to the last step of the game to reach the goal
+		pq.add(mz.getStart());
+		while(mz.getGoals().size() != 0) {
+			Pair cur = pq.poll();
+			visited[cur.getY()][cur.getX()] = true;
+			if(mz.checkGoal(cur)) {
+				last = cur;
+				break;
+			}
+			Pair up = ag.moveUp(cur, visited);
+			Pair down = ag.moveDown(cur, visited);
+			Pair left = ag.moveLeft(cur, visited);
+			Pair right = ag.moveRight(cur, visited);
+			if(up != null) {
+				up.setParent(cur);
+				pq.add(up);
+			}
+			if(left != null) {
+				left.setParent(cur);
+				pq.add(left);
+			}
+			if(down != null) {
+				down.setParent(cur);
+				pq.add(down);
+			}
+			if(right != null) {
 				right.setParent(cur);
 				pq.add(right);
 			}
